@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สอบปากเปล่า ชีววิทยา บทที่ 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800&family=Mitr:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g:#2d6a4f;--g2:#40916c;--gp:#d8f3dc;
+  --y:#ffd166;--or:#f4a261;--red:#e63946;--blue:#457b9d;
+  --bg:#f0faf4;--white:#fff;--text:#1b1b1b;
+  --r:14px;--sh:0 4px 20px rgba(0,0,0,.12)
+}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:.8rem 1rem 4rem}
+h1,h2,h3,h4{font-family:'Mitr',sans-serif}
+.screen{width:100%;max-width:580px;display:none}
+.screen.active{display:block}
+
+/* LANG BAR */
+.lang-bar{
+  width:100%;max-width:580px;
+  display:flex;gap:.4rem;margin-bottom:.6rem;margin-top:.4rem;
+}
+.lang-btn{
+  flex:1;padding:.45rem .3rem;border:2px solid #cce5d8;border-radius:8px;
+  background:#fff;font-size:.88rem;font-weight:700;cursor:pointer;
+  text-align:center;transition:.15s;color:var(--g);
+}
+.lang-btn.active{background:var(--g);color:#fff;border-color:var(--g)}
+
+/* NAV BAR */
+.nav-bar{
+  width:100%;max-width:580px;
+  display:flex;gap:.4rem;margin-bottom:.8rem;
+  background:var(--white);border-radius:12px;
+  box-shadow:var(--sh);padding:.5rem;
+}
+.nav-btn{
+  flex:1;padding:.5rem .3rem;border:none;border-radius:8px;
+  font-family:'Mitr',sans-serif;font-size:.82rem;font-weight:700;
+  cursor:pointer;background:transparent;color:#888;transition:.15s;
+}
+.nav-btn.active{background:var(--g);color:#fff}
+
+/* CARDS */
+.card{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);padding:1.6rem;margin-bottom:1rem}
+.logo-row{text-align:center;margin-bottom:.8rem}
+.logo-row .em{font-size:2.8rem}
+.logo-row h1{color:var(--g);font-size:1.4rem;margin:.2rem 0 .1rem}
+.logo-row p{font-size:.83rem;color:#666}
+.field-label{font-size:.82rem;font-weight:700;color:var(--g);margin-bottom:.4rem;display:block}
+
+/* TABS */
+.tab-row{display:flex;gap:.4rem;margin-bottom:1rem;flex-wrap:wrap}
+.tab{flex:1;min-width:55px;padding:.5rem .3rem;border:2px solid #cce5d8;border-radius:9px;
+  background:#fff;font-family:'Mitr',sans-serif;font-size:.86rem;font-weight:700;
+  color:var(--g);cursor:pointer;text-align:center;transition:.15s}
+.tab.active-cls{background:var(--blue);color:#fff;border-color:var(--blue)}
+.tab.active-grp{background:var(--g);color:#fff;border-color:var(--g)}
+
+/* MEMBERS */
+.members-wrap{background:#f9fffe;border:1.5px solid #cce5d8;border-radius:11px;padding:.9rem;margin-bottom:1rem}
+.members-wrap h3{color:var(--g);font-size:.88rem;margin-bottom:.6rem}
+.member-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem}
+.mem-num{width:24px;height:24px;border-radius:50%;background:var(--g);color:#fff;
+  font-size:.68rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mem-inp{flex:1;padding:.44rem .7rem;border:1.5px solid #cce5d8;border-radius:8px;
+  font-family:'Sarabun',sans-serif;font-size:.86rem;outline:none;transition:border .15s}
+.mem-inp:focus{border-color:var(--g2)}
+.mem-inp::placeholder{color:#ccc}
+.absent-row{display:flex;align-items:center;gap:.4rem;margin-top:.15rem;padding-left:32px}
+.absent-row label{font-size:.75rem;color:#888}
+.mem-absent-cb{accent-color:var(--red)}
+
+/* BUTTONS */
+.btn{padding:.75rem 1.4rem;border:none;border-radius:10px;font-family:'Mitr',sans-serif;
+  font-size:.95rem;font-weight:700;cursor:pointer;transition:.15s}
+.btn:hover{transform:translateY(-2px);opacity:.9}
+.btn-green{background:var(--g);color:#fff}
+.btn-gray{background:#eee;color:#666}
+.btn-red{background:var(--red);color:#fff}
+.btn-full{width:100%}
+.btn-row{display:flex;gap:.6rem}
+
+/* QUIZ */
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:.7rem;gap:.5rem;flex-wrap:wrap}
+.group-chip{background:var(--white);border-radius:999px;padding:.3rem .9rem;font-size:.8rem;font-weight:700;color:var(--g);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.score-chip{background:var(--g);color:#fff;border-radius:999px;padding:.3rem .9rem;font-family:'Mitr',sans-serif;font-size:.92rem;font-weight:800}
+.prog-wrap{background:#cce5d8;border-radius:999px;height:8px;margin-bottom:.8rem;overflow:hidden}
+.prog-bar{background:linear-gradient(90deg,var(--g2),#95d5b2);height:100%;border-radius:999px;transition:width .4s}
+
+.q-badge{display:inline-block;background:var(--gp);color:var(--g);font-size:.7rem;font-weight:800;border-radius:6px;padding:2px 8px;margin-bottom:.4rem}
+.q-secname{font-size:.72rem;color:#888;margin-bottom:.35rem}
+.scenario-box{background:#fff8ec;border:1.5px solid var(--y);border-left:4px solid var(--or);border-radius:9px;
+  padding:.55rem .85rem;margin-bottom:.7rem;font-size:.82rem;line-height:1.7;color:#555}
+.scenario-box strong{color:#7a5000}
+.q-text{font-size:1.18rem;font-weight:700;line-height:1.65;color:var(--text);margin-bottom:.9rem;min-height:2.6rem}
+
+/* TIMER */
+.timer-row{display:flex;justify-content:center;margin-bottom:.8rem}
+svg.tsv{width:68px;height:68px}
+.tbg{fill:none;stroke:#d8f3dc;stroke-width:7}
+.tring{fill:none;stroke:var(--g);stroke-width:7;stroke-linecap:round;stroke-dasharray:188;stroke-dashoffset:0;
+  transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset 1s linear,stroke .4s}
+.tring.warn{stroke:var(--or)}.tring.danger{stroke:var(--red)}
+.tnum{font-family:'Mitr',sans-serif;font-size:1.15rem;font-weight:800;fill:var(--g);text-anchor:middle;dominant-baseline:central}
+
+.ans-box{background:var(--gp);border:2px dashed var(--g2);border-radius:11px;padding:.7rem 1rem;text-align:center;display:none}
+.ans-box.show{display:block;animation:popIn .25s}
+.ans-label{font-size:.7rem;color:var(--g2);font-weight:700;margin-bottom:3px}
+.ans-word{font-family:'Mitr',sans-serif;font-size:1.45rem;font-weight:800;color:var(--g)}
+
+.act-row{display:flex;gap:.5rem;margin-top:.9rem}
+.act-row button{flex:1;padding:.75rem;border:none;border-radius:11px;font-family:'Mitr',sans-serif;
+  font-size:.92rem;font-weight:700;cursor:pointer;transition:.1s}
+.act-row button:hover{transform:translateY(-2px)}
+.btn-show{background:var(--y);color:#5a3e00}
+.btn-ok{background:var(--g);color:#fff}
+.btn-miss{background:var(--red);color:#fff}
+.bot-row{display:flex;gap:.5rem;margin-top:.6rem}
+.btn-next{flex:1;padding:.68rem;background:var(--blue);color:#fff;border:none;border-radius:11px;
+  font-family:'Mitr',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;display:none}
+.btn-abort{padding:.68rem 1rem;background:#eee;color:#888;border:none;border-radius:11px;font-size:.8rem;cursor:pointer}
+
+/* MEM TAGS */
+.mem-tags-wrap{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.5rem}
+.mem-tag{border-radius:999px;padding:.22rem .7rem;font-size:.78rem;font-weight:600}
+.mem-tag.present{background:var(--gp);color:var(--g)}
+.mem-tag.absent{background:#ffe0e0;color:#c00}
+
+/* SUMMARY */
+.group-card{border:1.5px solid #cce5d8;border-radius:10px;padding:.75rem 1rem;margin-bottom:.6rem}
+.group-card.complete{border-color:var(--g);background:#f6fdf9}
+.group-card.partial{border-color:var(--or);background:#fff9f2}
+.group-card.empty{border-color:#ddd;background:#fafafa}
+.gc-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;flex-wrap:wrap;gap:.3rem}
+.gc-title{font-family:'Mitr',sans-serif;font-weight:700;font-size:.92rem}
+.gc-badge{font-size:.7rem;font-weight:700;border-radius:999px;padding:2px 9px}
+.badge-complete{background:var(--gp);color:var(--g)}
+.badge-partial{background:#ffecd6;color:#a05000}
+.badge-empty{background:#eee;color:#888}
+.badge-score{background:var(--g);color:#fff;font-family:'Mitr',sans-serif;font-size:.82rem;padding:3px 10px;border-radius:999px}
+.gc-members{display:flex;flex-wrap:wrap;gap:.3rem}
+.gc-mem{font-size:.76rem;border-radius:6px;padding:2px 8px;font-weight:600}
+.gc-mem.done{background:var(--gp);color:var(--g)}
+.gc-mem.pending{background:#ffe0e0;color:#c00}
+.empty-state{text-align:center;padding:2rem;color:#bbb;font-size:.9rem}
+
+/* RESULT */
+.res-score-box{background:linear-gradient(135deg,var(--g),var(--g2));border-radius:14px;padding:1.1rem;
+  margin-bottom:1rem;color:#fff;text-align:center}
+.res-score-box .big{font-family:'Mitr',sans-serif;font-size:3.2rem;font-weight:800;line-height:1}
+.res-score-box .of{font-size:.9rem;opacity:.85;margin-top:.2rem}
+.res-score-box .pct{font-size:1rem;font-weight:700;margin-top:.25rem;opacity:.9}
+
+@keyframes popIn{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}
+</style>
+</head>
+<body>
+
+<!-- LANG -->
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('th')">🇹🇭 ไทย</button>
+  <button class="lang-btn"        onclick="setLang('en')">🇬🇧 English</button>
+  <button class="lang-btn"        onclick="setLang('fr')">🇫🇷 Français</button>
+</div>
+
+<!-- NAV -->
+<div class="nav-bar">
+  <button class="nav-btn active" id="nav-setup"   onclick="goTab('setup')"   data-i18n="nav_exam"></button>
+  <button class="nav-btn"        id="nav-summary"  onclick="goTab('summary')" data-i18n="nav_summary"></button>
+</div>
+
+<!-- ══ SETUP ══ -->
+<div class="screen active" id="setup">
+  <div id="setup-form">
+    <div class="card">
+      <div class="logo-row">
+        <div class="em">🌿</div>
+        <h1 data-i18n="app_title"></h1>
+        <p  data-i18n="app_sub"></p>
+      </div>
+
+      <label class="field-label" data-i18n="label_class"></label>
+      <div class="tab-row">
+        <div class="tab active-cls" id="cls1" onclick="selectClass('ม.4/1')">ม.4/1</div>
+        <div class="tab"            id="cls2" onclick="selectClass('ม.4/2')">ม.4/2</div>
+      </div>
+
+      <label class="field-label" data-i18n="label_group"></label>
+      <div class="tab-row" id="grp-tabs">
+        <div class="tab active-grp" onclick="selectGroup(1)" data-i18n-tpl="group_n" data-n="1"></div>
+        <div class="tab"            onclick="selectGroup(2)" data-i18n-tpl="group_n" data-n="2"></div>
+        <div class="tab"            onclick="selectGroup(3)" data-i18n-tpl="group_n" data-n="3"></div>
+        <div class="tab"            onclick="selectGroup(4)" data-i18n-tpl="group_n" data-n="4"></div>
+        <div class="tab"            onclick="selectGroup(5)" data-i18n-tpl="group_n" data-n="5"></div>
+        <div class="tab"            onclick="selectGroup(6)" data-i18n-tpl="group_n" data-n="6"></div>
+      </div>
+
+      <div class="members-wrap">
+        <h3 id="members-title"></h3>
+        <div id="members-list"></div>
+      </div>
+      <button class="btn btn-green btn-full" onclick="startExam()" data-i18n="btn_start"></button>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz-area" style="display:none">
+    <div class="top-bar">
+      <div class="group-chip" id="chip-group"></div>
+      <div class="score-chip" id="chip-score"></div>
+    </div>
+    <div class="prog-wrap"><div class="prog-bar" id="prog-bar" style="width:0%"></div></div>
+    <div class="card" id="q-card" style="animation:popIn .3s cubic-bezier(.34,1.56,.64,1)">
+      <div class="q-badge"   id="q-badge"></div>
+      <div class="q-secname" id="q-secname"></div>
+      <div id="scenario-wrap"></div>
+      <div class="q-text"    id="q-text"></div>
+      <div class="timer-row">
+        <svg class="tsv" viewBox="0 0 70 70">
+          <circle class="tbg"   cx="35" cy="35" r="30"/>
+          <circle class="tring" id="tring" cx="35" cy="35" r="30"/>
+          <text   class="tnum"  id="tnum"  x="35" y="35">20</text>
+        </svg>
+      </div>
+      <div class="ans-box" id="ans-box">
+        <div class="ans-label" data-i18n="ans_label"></div>
+        <div class="ans-word"  id="ans-word">—</div>
+      </div>
+      <div class="act-row" id="phase1">
+        <button class="btn-show" onclick="reveal()" data-i18n="btn_reveal"></button>
+      </div>
+      <div class="act-row" id="phase2" style="display:none">
+        <button class="btn-miss" onclick="mark(false)" data-i18n="btn_wrong"></button>
+        <button class="btn-ok"   onclick="mark(true)"  data-i18n="btn_correct"></button>
+      </div>
+      <div class="bot-row">
+        <button class="btn-next"  id="btn-next"  onclick="nextQ()" data-i18n="btn_next"></button>
+        <button class="btn-abort" onclick="confirmAbort()" data-i18n="btn_abort"></button>
+      </div>
+    </div>
+    <div class="card" style="padding:1rem">
+      <div style="font-family:'Mitr',sans-serif;font-size:.82rem;color:var(--g);margin-bottom:.4rem" data-i18n="label_today_members"></div>
+      <div class="mem-tags-wrap" id="mem-tags-quiz"></div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result-area" style="display:none">
+    <div class="card">
+      <div style="text-align:center">
+        <div style="font-size:3rem" id="res-em">🎉</div>
+        <h2 style="color:var(--g)" data-i18n="res_saved"></h2>
+        <p style="font-size:.85rem;color:#777;margin:.3rem 0 1rem" id="res-sub"></p>
+      </div>
+      <div class="res-score-box">
+        <div class="big" id="res-score">0</div>
+        <div class="of"  id="res-of"></div>
+        <div class="pct" id="res-pct"></div>
+      </div>
+      <div style="margin-bottom:.8rem">
+        <div class="field-label" data-i18n="res_present"></div>
+        <div class="mem-tags-wrap" id="res-present"></div>
+      </div>
+      <div id="res-absent-wrap" style="margin-bottom:1rem;display:none">
+        <div class="field-label" style="color:var(--red)" data-i18n="res_absent"></div>
+        <div class="mem-tags-wrap" id="res-absent"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-green" style="flex:1" onclick="goTab('summary')" data-i18n="btn_see_summary"></button>
+        <button class="btn btn-gray"  style="flex:1" onclick="backToSetup()"    data-i18n="btn_next_group"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SUMMARY ══ -->
+<div class="screen" id="summary">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem">
+      <h2 style="color:var(--g);font-size:1.1rem" data-i18n="summary_title"></h2>
+      <button class="btn btn-red" style="font-size:.75rem;padding:.35rem .8rem" onclick="clearAll()" data-i18n="btn_clear"></button>
+    </div>
+    <div style="display:flex;gap:.4rem;margin-bottom:.8rem">
+      <button class="tab active-cls" id="sum-cls1" onclick="renderSummary('ม.4/1')" style="font-size:.82rem">ม.4/1</button>
+      <button class="tab"            id="sum-cls2" onclick="renderSummary('ม.4/2')" style="font-size:.82rem">ม.4/2</button>
+    </div>
+    <div id="summary-content"></div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════
+// i18n STRINGS
+// ════════════════════════════
+const I18N = {
+  th:{
+    nav_exam:"⚙️ ตั้งค่า/สอบ", nav_summary:"📊 สรุปคะแนน",
+    app_title:"สอบปากเปล่า", app_sub:"ชีววิทยา บทที่ 1 · 10 ข้อ · คะแนนเต็ม 10/กลุ่ม",
+    label_class:"🏫 ห้องเรียน", label_group:"👥 กลุ่ม",
+    group_n:"กลุ่ม {n}",
+    members_title:"📋 รายชื่อสมาชิก",
+    members_hint:"(ติ๊ก ✓ = ไม่ได้มาวันนี้ มาตามสอบทีหลัง)",
+    mem_placeholder:"ชื่อ-สกุลสมาชิกคนที่ {n}",
+    absent_label:"ไม่ได้มาวันนี้ — มาตามสอบทีหลัง",
+    btn_start:"🎯 เริ่มสอบกลุ่มนี้",
+    ans_label:"✅ เฉลย",
+    btn_reveal:"👁 ดูเฉลย", btn_wrong:"❌ ตอบผิด", btn_correct:"✅ ตอบถูก",
+    btn_next:"ข้อถัดไป ▶", btn_abort:"✖ ยกเลิก",
+    btn_finish:"บันทึกผล 🏁",
+    label_today_members:"👥 ผู้เข้าสอบวันนี้",
+    res_saved:"บันทึกคะแนนแล้ว",
+    res_of:"คะแนน (เต็ม {n})",
+    res_present:"✅ สอบวันนี้",
+    res_absent:"⏳ ยังไม่ได้สอบ (มาตามสอบทีหลัง)",
+    btn_see_summary:"📊 ดูสรุปทั้งหมด", btn_next_group:"← สอบกลุ่มถัดไป",
+    summary_title:"📊 สรุปคะแนนทั้งหมด", btn_clear:"🗑 ล้างข้อมูล",
+    badge_complete:"✅ ครบทุกคน", badge_partial:"⏳ รอบางคน", badge_empty:"ยังไม่ได้สอบ",
+    score_total:"คะแนนรวมกลุ่ม",
+    waiting_for:"รอ {names} มาตามสอบ",
+    q_badge:"{cur}/{total} ข้อวันนี้ · ข้อที่ {qn}/{qtotal}",
+    chip_score:"{done}/{total} ข้อวันนี้",
+    scenario_label:"สมมติฐาน",
+    confirm_reset:"พบข้อมูลเดิมของ {grp}\nชื่อไม่ตรงกัน ต้องการล้างข้อมูลเดิมและเริ่มใหม่?",
+    confirm_abort:"ยกเลิกการสอบ? คะแนนจะไม่ถูกบันทึก",
+    confirm_clear:"ล้างข้อมูลคะแนนทั้งหมด?\n(ไม่สามารถกู้คืนได้)",
+    err_no_member:"กรุณากรอกชื่อสมาชิกอย่างน้อย 1 คน",
+    err_no_present:"กรุณาระบุผู้ที่มาสอบวันนี้อย่างน้อย 1 คน",
+    err_done:"สมาชิกที่มาวันนี้ตอบครบทุกข้อของตัวเองแล้ว",
+    pct_complete:"{pct}% · ครบทุกคนแล้ว ✅",
+    pct_waiting:"รอ {names} มาตามสอบ",
+    score_today:"{correct} (วันนี้)",
+    of_today:"จาก {total} ข้อวันนี้ · รวม {tc}/{ta}",
+    empty_summary:"ยังไม่มีข้อมูลสำหรับ {cls}",
+    label_gs_url:"📊 Google Sheets URL (ไม่บังคับ)",
+    btn_gs_save:"บันทึก",
+    gs_hint:"วาง URL ของ Apps Script Web App เพื่อเก็บข้อมูลลง Google Sheets",
+    gs_saved:"✅ บันทึก URL แล้ว",
+    gs_cleared:"ล้าง URL แล้ว",
+  },
+  en:{
+    nav_exam:"⚙️ Setup/Exam", nav_summary:"📊 Score Summary",
+    app_title:"Oral Exam", app_sub:"Biology Ch.1 · 10 Questions · Full Score 10/Group",
+    label_class:"🏫 Classroom", label_group:"👥 Group",
+    group_n:"Group {n}",
+    members_title:"📋 Members",
+    members_hint:"(Check ✓ = absent today, will make up later)",
+    mem_placeholder:"Member {n} full name",
+    absent_label:"Absent today — will make up later",
+    btn_start:"🎯 Start Exam",
+    ans_label:"✅ Answer",
+    btn_reveal:"👁 Show Answer", btn_wrong:"❌ Wrong", btn_correct:"✅ Correct",
+    btn_next:"Next ▶", btn_abort:"✖ Cancel",
+    btn_finish:"Save Results 🏁",
+    label_today_members:"👥 Today's Examinees",
+    res_saved:"Results Saved",
+    res_of:"points (out of {n})",
+    res_present:"✅ Examined Today",
+    res_absent:"⏳ Not Yet Examined (make up later)",
+    btn_see_summary:"📊 View All Scores", btn_next_group:"← Next Group",
+    summary_title:"📊 Score Summary", btn_clear:"🗑 Clear Data",
+    badge_complete:"✅ All Done", badge_partial:"⏳ Pending", badge_empty:"Not Yet Examined",
+    score_total:"Group Total Score",
+    waiting_for:"Waiting for {names}",
+    q_badge:"{cur}/{total} today · Q{qn}/{qtotal}",
+    chip_score:"{done}/{total} today",
+    scenario_label:"Hypothesis",
+    confirm_reset:"Existing data found for {grp}\nNames don't match. Clear old data and start fresh?",
+    confirm_abort:"Cancel exam? Score will NOT be saved.",
+    confirm_clear:"Clear ALL score data?\n(Cannot be undone)",
+    err_no_member:"Please enter at least 1 member name.",
+    err_no_present:"Please mark at least 1 member as present today.",
+    err_done:"All present members have already answered their questions.",
+    pct_complete:"{pct}% · All members done ✅",
+    pct_waiting:"Waiting for {names}",
+    score_today:"{correct} (today)",
+    of_today:"from {total} today · total {tc}/{ta}",
+    empty_summary:"No data yet for {cls}",
+    label_gs_url:"📊 Google Sheets URL (optional)",
+    btn_gs_save:"Save",
+    gs_hint:"Paste your Apps Script Web App URL to save data to Google Sheets",
+    gs_saved:"✅ URL saved",
+    gs_cleared:"URL cleared",
+  },
+  fr:{
+    nav_exam:"⚙️ Config/Exam", nav_summary:"📊 Résumé",
+    app_title:"Examen Oral", app_sub:"Biologie Ch.1 · 10 Questions · Note max 10/Groupe",
+    label_class:"🏫 Classe", label_group:"👥 Groupe",
+    group_n:"Groupe {n}",
+    members_title:"📋 Membres",
+    members_hint:"(Cocher ✓ = absent aujourd'hui, rattrapera plus tard)",
+    mem_placeholder:"Nom du membre {n}",
+    absent_label:"Absent aujourd'hui — rattrapera plus tard",
+    btn_start:"🎯 Commencer l'examen",
+    ans_label:"✅ Réponse",
+    btn_reveal:"👁 Voir la réponse", btn_wrong:"❌ Faux", btn_correct:"✅ Correct",
+    btn_next:"Suivant ▶", btn_abort:"✖ Annuler",
+    btn_finish:"Enregistrer 🏁",
+    label_today_members:"👥 Candidats aujourd'hui",
+    res_saved:"Résultats enregistrés",
+    res_of:"points (sur {n})",
+    res_present:"✅ Examinés aujourd'hui",
+    res_absent:"⏳ Pas encore examinés (rattrapage plus tard)",
+    btn_see_summary:"📊 Voir tous les scores", btn_next_group:"← Groupe suivant",
+    summary_title:"📊 Résumé des scores", btn_clear:"🗑 Effacer",
+    badge_complete:"✅ Complet", badge_partial:"⏳ En attente", badge_empty:"Pas encore examiné",
+    score_total:"Score total du groupe",
+    waiting_for:"En attente de {names}",
+    q_badge:"{cur}/{total} aujourd'hui · Q{qn}/{qtotal}",
+    chip_score:"{done}/{total} aujourd'hui",
+    scenario_label:"Hypothèse",
+    confirm_reset:"Données existantes pour {grp}\nLes noms ne correspondent pas. Effacer et recommencer ?",
+    confirm_abort:"Annuler l'examen ? Le score ne sera PAS sauvegardé.",
+    confirm_clear:"Effacer TOUTES les données ?\n(Irréversible)",
+    err_no_member:"Veuillez entrer au moins 1 nom de membre.",
+    err_no_present:"Veuillez indiquer au moins 1 membre présent aujourd'hui.",
+    err_done:"Tous les membres présents ont déjà répondu à leurs questions.",
+    pct_complete:"{pct}% · Tous les membres terminés ✅",
+    pct_waiting:"En attente de {names}",
+    score_today:"{correct} (aujourd'hui)",
+    of_today:"sur {total} aujourd'hui · total {tc}/{ta}",
+    empty_summary:"Pas encore de données pour {cls}",
+    label_gs_url:"📊 URL Google Sheets (facultatif)",
+    btn_gs_save:"Enregistrer",
+    gs_hint:"Collez l'URL de votre Apps Script Web App pour sauvegarder dans Google Sheets",
+    gs_saved:"✅ URL enregistrée",
+    gs_cleared:"URL effacée",
+  }
+};
+
+// ════════════════════════════
+// QUESTIONS — 3 languages
+// ════════════════════════════
+const QUESTIONS = {
+  th:[
+    {sec:"ชีววิทยาคืออะไร",q:"ชีววิทยา เป็นวิชาที่ศึกษาเกี่ยวกับอะไร",a:"สิ่งมีชีวิต"},
+    {sec:"ชีววิทยาคืออะไร",q:"BIOLOGY มีรากศัพท์มาจากภาษาอะไร",a:"กรีก"},
+    {sec:"ชีววิทยาคืออะไร",q:"BIOLOGY มาจากภาษากรีก 2 คำ ได้แก่อะไรบ้าง",a:"BIOS และ LOGOS"},
+    {sec:"ชีววิทยาคืออะไร",q:"กระบวนการเคมีทั้งหมดในสิ่งมีชีวิต เรียกว่าอะไร",a:"กระบวนการเมแทบอลิซึม"},
+    {sec:"ชีววิทยาคืออะไร",q:"กระบวนการสร้าง ภาษาอังกฤษคืออะไร",a:"Anabolism"},
+    {sec:"ลักษณะเฉพาะของสิ่งมีชีวิต",q:"ยกตัวอย่างกระบวนการสร้าง 1 ตัวอย่าง",a:"การสังเคราะห์ด้วยแสง"},
+    {sec:"ลักษณะเฉพาะของสิ่งมีชีวิต",q:"ยกตัวอย่างกระบวนการสลาย 1 ตัวอย่าง",a:"การหายใจระดับเซลล์"},
+    {sec:"ลักษณะเฉพาะของสิ่งมีชีวิต",q:"กระบวนการเพิ่มจำนวนสิ่งมีชีวิตเพื่อดำรงรักษาเผ่าพันธุ์ไว้ เรียกว่าอะไร",a:"การสืบพันธุ์"},
+    {sec:"ลักษณะเฉพาะของสิ่งมีชีวิต",q:"การสืบพันธุ์โดยใช้เซลล์สืบพันธุ์ มีการปฏิสนธิ ลูกไม่ได้เหมือนพ่อแม่ทุกประการ จัดเป็นการสืบพันธุ์แบบใด",a:"การสืบพันธุ์แบบอาศัยเพศ"},
+    {sec:"ลักษณะเฉพาะของสิ่งมีชีวิต",q:"ปลา มีการปฏิสนธิรูปแบบใด",a:"ปฏิสนธิภายนอก"},
+    {sec:"ลักษณะเฉพาะของสิ่งมีชีวิต",q:"หมี มีการปฏิสนธิรูปแบบใด",a:"ปฏิสนธิภายใน"},
+    {sec:"ลักษณะเฉพาะของสิ่งมีชีวิต",q:"การสืบพันธุ์โดยใช้เซลล์ร่างกาย ลูกเหมือนพ่อแม่ จัดเป็นการสืบพันธุ์รูปแบบใด",a:"การสืบพันธุ์แบบไม่อาศัยเพศ"},
+    {sec:"ลักษณะเฉพาะของสิ่งมีชีวิต",q:"ไผ่ สืบพันธุ์แบบไม่อาศัยเพศด้วยวิธีการใด",a:"การแตกหน่อ"},
+    {sec:"ลักษณะเฉพาะของสิ่งมีชีวิต",q:"พลานาเรีย สืบพันธุ์แบบไม่อาศัยเพศด้วยวิธีการใด",a:"การงอกใหม่"},
+    {sec:"ลักษณะเฉพาะของสิ่งมีชีวิต",q:"แบคทีเรีย สืบพันธุ์แบบไม่อาศัยเพศด้วยวิธีการใด",a:"การแบ่งตัว / การแบ่งตัวเป็น 2"},
+    {sec:"ลักษณะเฉพาะของสิ่งมีชีวิต",q:"ฟังไจ สืบพันธุ์แบบไม่อาศัยเพศด้วยวิธีการใด",a:"การสร้างสปอร์"},
+    {sec:"ลักษณะเฉพาะของสิ่งมีชีวิต",q:"กระบวนการที่สิ่งมีชีวิตแบ่งเซลล์เพิ่มจำนวน ขยายขนาด เปลี่ยนรูปร่างทำหน้าที่เฉพาะ เรียกว่าอะไร",a:"การเจริญเติบโต"},
+    {sec:"ลักษณะเฉพาะของสิ่งมีชีวิต",q:"อายุของสิ่งมีชีวิตตั้งแต่เกิดจนตาย เรียกว่าอะไร",a:"อายุขัย"},
+    {sec:"การตอบสนองและการควบคุมสมดุล",q:"อุณหภูมิสิ่งแวดล้อม / ความเครียด / ความชื้นสัมพัทธ์ / ความเป็นกรด-ด่าง — สิ่งใดไม่ใช่สิ่งเร้าภายนอก",a:"ความเครียด"},
+    {sec:"การตอบสนองและการควบคุมสมดุล",q:"การแสดงออกของสิ่งมีชีวิตต่อสิ่งเร้า เรียกว่าอะไร",a:"การตอบสนอง"},
+    {sec:"การตอบสนองและการควบคุมสมดุล",q:"อวัยวะที่ช่วยให้นกทะเลขับเกลือส่วนเกินออกทางจมูก เรียกว่าอะไร",a:"Nasal salt gland"},
+    {sec:"การตอบสนองและการควบคุมสมดุล",q:"ออร์แกเนลล์ใดในพารามีเซียมที่ทำหน้าที่ขับน้ำส่วนเกินออกจากเซลล์",a:"Contractile vacuole"},
+    {sec:"การตอบสนองและการควบคุมสมดุล",q:"เหงือกของปลาน้ำเค็ม ทำหน้าที่อะไร",a:"ขับเกลือแร่ส่วนเกินออก"},
+    {sec:"การตอบสนองและการควบคุมสมดุล",q:"เหงือกของปลาน้ำจืด ทำหน้าที่อะไร",a:"ดูดซับเกลือแร่/แร่ธาตุ"},
+    {sec:"การตอบสนองและการควบคุมสมดุล",q:"สิ่งมีชีวิตที่อุณหภูมิร่างกายคงที่แม้สภาพแวดล้อมหนาวเหน็บ เรียกว่าอะไร",a:"สัตว์เลือดอุ่น"},
+    {sec:"สาขาวิชาย่อยของชีววิทยา",q:"สาขาวิชาที่ศึกษาเกี่ยวกับแมลง เรียกว่าอะไร",a:"กีฏวิทยา"},
+    {sec:"สาขาวิชาย่อยของชีววิทยา",q:"สาขาวิชาที่ศึกษาเกี่ยวกับการทำงานของอวัยวะในร่างกาย เรียกว่าอะไร",a:"สรีรวิทยา"},
+    {sec:"ตัวแปรในการทดลอง",scenario:"ถ้าน้ำส้มสายชูสลายเปลือกไข่ได้ ไข่ที่แช่นานกว่า 3 วันจะสูญเสียเปลือก",q:"จากสมมติฐานนี้ ตัวแปรต้นคืออะไร",a:"ระยะเวลาในการแช่ไข่ไก่"},
+    {sec:"ตัวแปรในการทดลอง",scenario:"ถ้าความเข้มแสงมีผลต่อการเจริญเติบโต พืชที่แจ้งจะสูงกว่าพืชที่ร่ม",q:"จากสมมติฐานนี้ ตัวแปรต้นคืออะไร",a:"ความเข้มแสงที่พืชได้รับ"},
+    {sec:"ความรู้ทางวิทยาศาสตร์",q:"สมมติฐานที่ตรวจสอบหลายครั้งว่าจริง จะถูกเรียกว่าอะไร",a:"ทฤษฎี"},
+  ],
+  en:[
+    {sec:"What is Biology?",q:"What subject does Biology study?",a:"Living organisms"},
+    {sec:"What is Biology?",q:"What language does the word BIOLOGY originate from?",a:"Greek"},
+    {sec:"What is Biology?",q:"BIOLOGY comes from 2 Greek words. What are they?",a:"BIOS and LOGOS"},
+    {sec:"What is Biology?",q:"What is the term for all chemical processes inside a living organism?",a:"Metabolism"},
+    {sec:"What is Biology?",q:"What is the English term for the building-up process (กระบวนการสร้าง)?",a:"Anabolism"},
+    {sec:"Characteristics of Living Things",q:"Give 1 example of an anabolic process.",a:"Photosynthesis"},
+    {sec:"Characteristics of Living Things",q:"Give 1 example of a catabolic process.",a:"Cellular respiration"},
+    {sec:"Characteristics of Living Things",q:"What is the process of increasing the number of the same species to preserve the lineage called?",a:"Reproduction"},
+    {sec:"Characteristics of Living Things",q:"Reproduction using sex cells, involving fertilization, where offspring are not identical to parents — what type is this?",a:"Sexual reproduction"},
+    {sec:"Characteristics of Living Things",q:"What type of fertilization does a fish have?",a:"External fertilization"},
+    {sec:"Characteristics of Living Things",q:"What type of fertilization does a bear have?",a:"Internal fertilization"},
+    {sec:"Characteristics of Living Things",q:"Reproduction using somatic cells where offspring resemble the parent — what type is this?",a:"Asexual reproduction"},
+    {sec:"Characteristics of Living Things",q:"How does bamboo reproduce asexually?",a:"Budding"},
+    {sec:"Characteristics of Living Things",q:"How does Planaria reproduce asexually?",a:"Regeneration"},
+    {sec:"Characteristics of Living Things",q:"How does bacteria reproduce asexually?",a:"Binary fission"},
+    {sec:"Characteristics of Living Things",q:"How does fungi reproduce asexually?",a:"Sporulation"},
+    {sec:"Characteristics of Living Things",q:"What is the process where cells divide, enlarge, differentiate, and form a definite shape called?",a:"Growth and development"},
+    {sec:"Characteristics of Living Things",q:"What is the term for a living organism's lifespan from birth to death?",a:"Life span"},
+    {sec:"Response & Homeostasis",q:"Environmental temperature / Stress / Relative humidity / pH — which is NOT an external stimulus?",a:"Stress"},
+    {sec:"Response & Homeostasis",q:"What is the expression of a living organism in response to a stimulus called?",a:"Response"},
+    {sec:"Response & Homeostasis",q:"What organ helps seabirds excrete excess salt through the nose?",a:"Nasal salt gland"},
+    {sec:"Response & Homeostasis",q:"Which organelle in Paramecium expels excess water from the cell?",a:"Contractile vacuole"},
+    {sec:"Response & Homeostasis",q:"What is the function of the gills in saltwater fish?",a:"Excrete excess mineral salts"},
+    {sec:"Response & Homeostasis",q:"What is the function of the gills in freshwater fish?",a:"Absorb mineral salts"},
+    {sec:"Response & Homeostasis",q:"What are living organisms called whose body temperature stays constant regardless of the environment?",a:"Warm-blooded animals"},
+    {sec:"Sub-branches of Biology",q:"What is the branch of biology that studies insects called?",a:"Entomology"},
+    {sec:"Sub-branches of Biology",q:"What is the branch that studies the functions of body organs called?",a:"Physiology"},
+    {sec:"Variables in Experiments",scenario:"If vinegar can dissolve eggshells, then an egg soaked in vinegar for more than 3 days will lose its shell.",q:"From this hypothesis, what is the independent variable?",a:"Duration of soaking the egg"},
+    {sec:"Variables in Experiments",scenario:"If light intensity affects plant growth, then plants in open sunlight will be taller than those in shade.",q:"From this hypothesis, what is the independent variable?",a:"Light intensity received by the plant"},
+    {sec:"Scientific Knowledge",q:"A hypothesis that has been verified many times and is considered true is called what?",a:"Theory"},
+  ],
+  fr:[
+    {sec:"Qu'est-ce que la biologie ?",q:"Quelle matière la biologie étudie-t-elle ?",a:"Les êtres vivants"},
+    {sec:"Qu'est-ce que la biologie ?",q:"De quelle langue le mot BIOLOGIE est-il issu ?",a:"Le grec"},
+    {sec:"Qu'est-ce que la biologie ?",q:"BIOLOGIE vient de 2 mots grecs. Lesquels ?",a:"BIOS et LOGOS"},
+    {sec:"Qu'est-ce que la biologie ?",q:"Comment appelle-t-on l'ensemble des processus chimiques dans un être vivant ?",a:"Le métabolisme"},
+    {sec:"Qu'est-ce que la biologie ?",q:"Comment appelle-t-on en anglais le processus de construction (anabolisme) ?",a:"Anabolism"},
+    {sec:"Caractéristiques des êtres vivants",q:"Donnez 1 exemple de processus anabolique.",a:"La photosynthèse"},
+    {sec:"Caractéristiques des êtres vivants",q:"Donnez 1 exemple de processus catabolique.",a:"La respiration cellulaire"},
+    {sec:"Caractéristiques des êtres vivants",q:"Comment appelle-t-on le processus d'augmentation du nombre d'individus de la même espèce ?",a:"La reproduction"},
+    {sec:"Caractéristiques des êtres vivants",q:"Reproduction par cellules reproductrices avec fécondation, où les descendants ne sont pas identiques aux parents — quel type est-ce ?",a:"Reproduction sexuée"},
+    {sec:"Caractéristiques des êtres vivants",q:"Quel type de fécondation les poissons ont-ils ?",a:"Fécondation externe"},
+    {sec:"Caractéristiques des êtres vivants",q:"Quel type de fécondation les ours ont-ils ?",a:"Fécondation interne"},
+    {sec:"Caractéristiques des êtres vivants",q:"Reproduction par cellules somatiques où les descendants ressemblent aux parents — quel type est-ce ?",a:"Reproduction asexuée"},
+    {sec:"Caractéristiques des êtres vivants",q:"Comment le bambou se reproduit-il de façon asexuée ?",a:"Bourgeonnement"},
+    {sec:"Caractéristiques des êtres vivants",q:"Comment la planaire se reproduit-elle de façon asexuée ?",a:"Régénération"},
+    {sec:"Caractéristiques des êtres vivants",q:"Comment les bactéries se reproduisent-elles de façon asexuée ?",a:"Fission binaire"},
+    {sec:"Caractéristiques des êtres vivants",q:"Comment les champignons se reproduisent-ils de façon asexuée ?",a:"Sporulation"},
+    {sec:"Caractéristiques des êtres vivants",q:"Comment appelle-t-on le processus par lequel les cellules se divisent, s'agrandissent, se différencient et prennent une forme définitive ?",a:"Croissance et développement"},
+    {sec:"Caractéristiques des êtres vivants",q:"Comment appelle-t-on la durée de vie d'un être vivant de sa naissance à sa mort ?",a:"Espérance de vie"},
+    {sec:"Réponse & Homéostasie",q:"Température ambiante / Stress / Humidité relative / pH — lequel n'est PAS un stimulus externe ?",a:"Le stress"},
+    {sec:"Réponse & Homéostasie",q:"Comment appelle-t-on la réaction d'un être vivant à un stimulus ?",a:"La réponse"},
+    {sec:"Réponse & Homéostasie",q:"Quel organe permet aux oiseaux marins d'excréter l'excès de sel par le nez ?",a:"Glande nasale à sel"},
+    {sec:"Réponse & Homéostasie",q:"Quel organite de la paramécie expulse l'excès d'eau de la cellule ?",a:"Vacuole contractile"},
+    {sec:"Réponse & Homéostasie",q:"Quelle est la fonction des branchies des poissons d'eau salée ?",a:"Excréter l'excès de sels minéraux"},
+    {sec:"Réponse & Homéostasie",q:"Quelle est la fonction des branchies des poissons d'eau douce ?",a:"Absorber les sels minéraux"},
+    {sec:"Réponse & Homéostasie",q:"Comment appelle-t-on les êtres vivants dont la température corporelle reste constante quelle que soit la température ambiante ?",a:"Animaux homéothermes"},
+    {sec:"Sous-branches de la biologie",q:"Comment appelle-t-on la branche de la biologie qui étudie les insectes ?",a:"Entomologie"},
+    {sec:"Sous-branches de la biologie",q:"Comment appelle-t-on la branche qui étudie le fonctionnement des organes du corps ?",a:"Physiologie"},
+    {sec:"Variables expérimentales",scenario:"Si le vinaigre peut dissoudre la coquille d'un œuf, alors un œuf trempé dans du vinaigre plus de 3 jours perdra sa coquille.",q:"Dans cette hypothèse, quelle est la variable indépendante ?",a:"La durée de trempage de l'œuf"},
+    {sec:"Variables expérimentales",scenario:"Si l'intensité lumineuse affecte la croissance des plantes, alors les plantes en plein soleil seront plus grandes que celles à l'ombre.",q:"Dans cette hypothèse, quelle est la variable indépendante ?",a:"L'intensité lumineuse reçue par la plante"},
+    {sec:"Connaissances scientifiques",q:"Une hypothèse vérifiée de nombreuses fois et considérée comme vraie s'appelle comment ?",a:"Une théorie"},
+  ]
+};
+
+// ════════════════════════════
+// CONSTANTS & STATE
+// ════════════════════════════
+const TOTAL=10, SECS=20, DASH=188, MAX=8;
+let lang='th';
+let classroom='ม.4/1', groupNo=1;
+let allMembers=[], presentIdxs=[], absentIdxs=[];
+let pickedQuestions=[], sessionSlots=[], curSlot=0;
+let timerID=null, timeLeft=0;
+let currentSummaryClass='ม.4/1';
+
+// ════════════════════════════
+// i18n helpers
+// ════════════════════════════
+function t(key, vars={}){
+  let s=I18N[lang][key]||I18N.th[key]||key;
+  Object.entries(vars).forEach(([k,v])=>{ s=s.replaceAll('{'+k+'}',v); });
+  return s;
+}
+function applyI18N(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    el.textContent=t(el.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-tpl]').forEach(el=>{
+    el.textContent=t(el.dataset.i18nTpl,{n:el.dataset.n});
+  });
+  document.getElementById('members-title').innerHTML=
+    `${t('members_title')} <span style="font-weight:400;color:#888;font-size:.8rem">${t('members_hint')}</span>`;
+  buildMembers();
+}
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>{
+    b.classList.toggle('active',['th','en','fr'][i]===l);
+  });
+  applyI18N();
+  if(document.getElementById('summary').classList.contains('active'))
+    renderSummary(currentSummaryClass);
+}
+
+// ════════════════════════════
+// STORAGE — localStorage
+// ════════════════════════════
+function loadDB(){ try{return JSON.parse(localStorage.getItem('bio_scores2')||'{}')}catch(e){return{}} }
+function saveDB(db){ localStorage.setItem('bio_scores2',JSON.stringify(db)) }
+function getGrpDB(cls,grpLabel){
+  const db=loadDB();
+  if(!db[cls]) db[cls]={};
+  if(!db[cls][grpLabel]) db[cls][grpLabel]={allMembers:[],pickedIdx:[],sessions:[]};
+  return {db, grp:db[cls][grpLabel]};
+}
+
+// ════════════════════════════
+// BUILD UI
+// ════════════════════════════
+function buildMembers(){
+  const el=document.getElementById('members-list');
+  el.innerHTML='';
+  for(let i=1;i<=MAX;i++){
+    el.innerHTML+=`
+      <div class="member-row">
+        <div class="mem-num">${i}</div>
+        <input class="mem-inp" id="mem${i}" type="text" placeholder="${t('mem_placeholder',{n:i})}">
+      </div>
+      <div class="absent-row">
+        <input type="checkbox" class="mem-absent-cb" id="abs${i}">
+        <label for="abs${i}">${t('absent_label')}</label>
+      </div>`;
+  }
+}
+
+function selectClass(cls){
+  classroom=cls;
+  document.getElementById('cls1').classList.toggle('active-cls',cls==='ม.4/1');
+  document.getElementById('cls2').classList.toggle('active-cls',cls==='ม.4/2');
+}
+function selectGroup(n){
+  groupNo=n;
+  document.querySelectorAll('#grp-tabs .tab')
+    .forEach((t,i)=>t.classList.toggle('active-grp',i+1===n));
+}
+
+// ════════════════════════════
+// START EXAM
+// ════════════════════════════
+function startExam(){
+  allMembers=[]; presentIdxs=[]; absentIdxs=[];
+  for(let i=0;i<MAX;i++){
+    const v=document.getElementById('mem'+(i+1)).value.trim();
+    if(!v) continue;
+    const idx=allMembers.length;
+    allMembers.push(v);
+    if(document.getElementById('abs'+(i+1)).checked) absentIdxs.push(idx);
+    else presentIdxs.push(idx);
+  }
+  if(!allMembers.length){ alert(t('err_no_member')); return; }
+  if(!presentIdxs.length){ alert(t('err_no_present')); return; }
+
+  const grpLabel=t('group_n',{n:groupNo});
+  const {db,grp}=getGrpDB(classroom,grpLabel);
+
+  if(grp.allMembers.length>0){
+    if(grp.allMembers.join(',')!==allMembers.join(',')){
+      if(!confirm(t('confirm_reset',{grp:grpLabel}))) return;
+      grp.allMembers=[]; grp.pickedIdx=[]; grp.sessions=[];
+    }
+  }
+  if(!grp.allMembers.length){
+    grp.allMembers=[...allMembers];
+    grp.pickedIdx=shuffle([...Array(QUESTIONS[lang].length).keys()]).slice(0,TOTAL);
+    saveDB(db);
+  } else {
+    allMembers=[...grp.allMembers];
+    const inputPresent=new Set();
+    for(let i=0;i<MAX;i++){
+      const v=document.getElementById('mem'+(i+1)).value.trim();
+      if(v&&!document.getElementById('abs'+(i+1)).checked) inputPresent.add(v);
+    }
+    presentIdxs=[]; absentIdxs=[];
+    allMembers.forEach((name,idx)=>{
+      if(inputPresent.has(name)) presentIdxs.push(idx);
+      else absentIdxs.push(idx);
+    });
+  }
+
+  pickedQuestions=grp.pickedIdx.map(i=>QUESTIONS[lang][i]);
+
+  const doneQByMember={};
+  grp.sessions.forEach(s=>{
+    s.answers.forEach(a=>{
+      if(!doneQByMember[a.memberIdx]) doneQByMember[a.memberIdx]=new Set();
+      doneQByMember[a.memberIdx].add(a.qIdx);
+    });
+  });
+
+  sessionSlots=[];
+  for(let qIdx=0;qIdx<TOTAL;qIdx++){
+    const memberIdx=qIdx%allMembers.length;
+    const alreadyDone=doneQByMember[memberIdx]&&doneQByMember[memberIdx].has(qIdx);
+    if(presentIdxs.includes(memberIdx)&&!alreadyDone)
+      sessionSlots.push({memberIdx,qIdx,correct:null});
+  }
+
+  if(!sessionSlots.length){ alert(t('err_done')); return; }
+
+  curSlot=0;
+  document.getElementById('chip-group').textContent=`${classroom} · ${grpLabel}`;
+  renderMemberTags('mem-tags-quiz');
+  document.getElementById('setup-form').style.display='none';
+  document.getElementById('quiz-area').style.display='block';
+  document.getElementById('result-area').style.display='none';
+  renderQ();
+}
+
+function renderMemberTags(elId, curMemberIdx=-1){
+  document.getElementById(elId).innerHTML=
+    allMembers.map((n,i)=>{
+      const isPresent=presentIdxs.includes(i);
+      const isCur=i===curMemberIdx;
+      if(isCur) return `<span class="mem-tag" style="background:var(--y);color:#5a3e00;outline:2px solid var(--or)">▶ ${n}</span>`;
+      return `<span class="mem-tag ${isPresent?'present':'absent'}">${isPresent?'👤':'⏳'} ${n}</span>`;
+    }).join('');
+}
+
+// ════════════════════════════
+// QUIZ
+// ════════════════════════════
+function renderQ(){
+  const slot=sessionSlots[curSlot];
+  const q=pickedQuestions[slot.qIdx];
+
+  document.getElementById('q-badge').textContent=
+    t('q_badge',{cur:curSlot+1,total:sessionSlots.length,qn:slot.qIdx+1,qtotal:TOTAL});
+  document.getElementById('q-secname').textContent='📌 '+q.sec;
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('ans-word').textContent=q.a;
+  document.getElementById('ans-box').classList.remove('show');
+  document.getElementById('prog-bar').style.width=(slot.qIdx/TOTAL*100)+'%';
+
+  document.getElementById('scenario-wrap').innerHTML=q.scenario
+    ?`<div class="scenario-box"><strong>${t('scenario_label')} :</strong> ${q.scenario}</div>`:'';
+
+  document.getElementById('phase1').style.display='flex';
+  document.getElementById('phase2').style.display='none';
+  document.getElementById('btn-next').style.display='none';
+  document.getElementById('btn-next').textContent=t('btn_next');
+
+  updateScoreChip();
+  renderMemberTags('mem-tags-quiz', slot.memberIdx);
+
+  const c=document.getElementById('q-card');
+  c.style.animation='none'; c.offsetHeight; c.style.animation='popIn .3s cubic-bezier(.34,1.56,.64,1)';
+  startTimer();
+}
+
+function updateScoreChip(){
+  const done=sessionSlots.slice(0,curSlot).filter(s=>s.correct===true).length;
+  document.getElementById('chip-score').textContent=
+    t('chip_score',{done,total:sessionSlots.length});
+}
+
+function startTimer(){
+  clearInterval(timerID); timeLeft=SECS; updateRing();
+  timerID=setInterval(()=>{timeLeft--;updateRing();if(timeLeft<=0){clearInterval(timerID);reveal();}},1000);
+}
+function updateRing(){
+  const r=document.getElementById('tring'),n=document.getElementById('tnum');
+  r.style.strokeDashoffset=DASH*(1-timeLeft/SECS);
+  n.textContent=timeLeft;
+  r.className='tring'+(timeLeft<=5?' danger':timeLeft<=10?' warn':'');
+}
+
+function reveal(){
+  clearInterval(timerID);
+  document.getElementById('ans-box').classList.add('show');
+  document.getElementById('phase1').style.display='none';
+  document.getElementById('phase2').style.display='flex';
+}
+function mark(ok){
+  sessionSlots[curSlot].correct=ok;
+  document.getElementById('phase2').style.display='none';
+  document.getElementById('btn-next').style.display='block';
+  updateScoreChip();
+  if(curSlot+1>=sessionSlots.length)
+    document.getElementById('btn-next').textContent=t('btn_finish');
+}
+function nextQ(){
+  curSlot++;
+  if(curSlot>=sessionSlots.length){ finishExam(); return; }
+  renderQ();
+}
+
+// ════════════════════════════
+// FINISH
+// ════════════════════════════
+function finishExam(){
+  clearInterval(timerID);
+  const grpLabel=t('group_n',{n:groupNo});
+  const {db,grp}=getGrpDB(classroom,grpLabel);
+  const date=new Date().toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'});
+  grp.sessions.push({
+    answers:sessionSlots.map(s=>({memberIdx:s.memberIdx,qIdx:s.qIdx,correct:s.correct})),
+    presentNames:presentIdxs.map(i=>allMembers[i]),
+    absentNames:absentIdxs.map(i=>allMembers[i]),
+    date, lang
+  });
+  saveDB(db);
+
+  document.getElementById('quiz-area').style.display='none';
+  document.getElementById('result-area').style.display='block';
+
+  const sessionCorrect=sessionSlots.filter(s=>s.correct).length;
+  let totalCorrect=0, totalAnswered=0;
+  grp.sessions.forEach(s=>s.answers.forEach(a=>{totalAnswered++;if(a.correct)totalCorrect++;}));
+  const isComplete=absentIdxs.length===0&&totalAnswered>=TOTAL;
+
+  document.getElementById('res-em').textContent=isComplete?(totalCorrect>=8?'🏆':'🎉'):'⏳';
+  document.getElementById('res-sub').textContent=`${classroom} · ${grpLabel}`;
+  document.getElementById('res-score').textContent=isComplete?totalCorrect:t('score_today',{correct:sessionCorrect});
+  document.getElementById('res-of').textContent=isComplete
+    ?t('res_of',{n:TOTAL})
+    :t('of_today',{total:sessionSlots.length,tc:totalCorrect,ta:totalAnswered});
+  document.getElementById('res-pct').textContent=isComplete
+    ?t('pct_complete',{pct:Math.round(totalCorrect/TOTAL*100)})
+    :t('pct_waiting',{names:absentIdxs.map(i=>allMembers[i]).join(', ')});
+
+  document.getElementById('res-present').innerHTML=
+    presentIdxs.map(i=>`<span class="mem-tag present">✅ ${allMembers[i]}</span>`).join('');
+  const aw=document.getElementById('res-absent-wrap');
+  if(absentIdxs.length){
+    aw.style.display='block';
+    document.getElementById('res-absent').innerHTML=
+      absentIdxs.map(i=>`<span class="mem-tag absent">⏳ ${allMembers[i]}</span>`).join('');
+  } else aw.style.display='none';
+}
+
+function backToSetup(){
+  document.getElementById('setup-form').style.display='block';
+  document.getElementById('quiz-area').style.display='none';
+  document.getElementById('result-area').style.display='none';
+}
+function confirmAbort(){
+  if(confirm(t('confirm_abort'))){ clearInterval(timerID); backToSetup(); }
+}
+
+// ════════════════════════════
+// SUMMARY
+// ════════════════════════════
+function renderSummary(cls){
+  currentSummaryClass=cls;
+  document.getElementById('sum-cls1').classList.toggle('active-cls',cls==='ม.4/1');
+  document.getElementById('sum-cls2').classList.toggle('active-cls',cls==='ม.4/2');
+  const db=loadDB(), clsData=db[cls]||{};
+  const el=document.getElementById('summary-content');
+  let html='';
+
+  for(let g=1;g<=6;g++){
+    const grpLabel=t('group_n',{n:g});
+    // try both th/en/fr label
+    const grp=clsData[grpLabel]
+      ||clsData[I18N.th.group_n.replace('{n}',g)]
+      ||clsData[I18N.en.group_n.replace('{n}',g)]
+      ||clsData[I18N.fr.group_n.replace('{n}',g)];
+
+    if(!grp||!grp.allMembers||!grp.allMembers.length){
+      html+=`<div class="group-card empty"><div class="gc-header">
+        <span class="gc-title">${grpLabel}</span>
+        <span class="gc-badge badge-empty">${t('badge_empty')}</span>
+      </div></div>`;
+      continue;
+    }
+
+    const N=grp.allMembers.length;
+    const memberScores={};
+    grp.allMembers.forEach((_,i)=>{ memberScores[i]={correct:0,answered:0}; });
+    grp.sessions.forEach(s=>s.answers.forEach(a=>{
+      memberScores[a.memberIdx].answered++;
+      if(a.correct) memberScores[a.memberIdx].correct++;
+    }));
+    const memberQCount={};
+    grp.allMembers.forEach((_,i)=>{ memberQCount[i]=0; });
+    for(let q=0;q<TOTAL;q++) memberQCount[q%N]++;
+
+    const totalCorrect=Object.values(memberScores).reduce((s,m)=>s+m.correct,0);
+    const totalAnswered=Object.values(memberScores).reduce((s,m)=>s+m.answered,0);
+    const isComplete=totalAnswered>=TOTAL;
+    const cardClass=isComplete?'complete':'partial';
+
+    html+=`<div class="group-card ${cardClass}">
+      <div class="gc-header">
+        <span class="gc-title">${grpLabel}</span>
+        <div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap">
+          <span class="gc-badge ${isComplete?'badge-complete':'badge-partial'}">${t(isComplete?'badge_complete':'badge_partial')}</span>
+          ${isComplete?`<span class="gc-badge badge-score">🏆 ${totalCorrect} / ${TOTAL}</span>`:''}
+        </div>
+      </div>
+      <div class="gc-members" style="margin-bottom:.5rem">
+        ${grp.allMembers.map((name,i)=>{
+          const sc=memberScores[i], need=memberQCount[i], done=sc.answered>=need;
+          return `<span class="gc-mem ${done?'done':'pending'}">${done?'✅':'⏳'} ${name} (${sc.correct}/${need})</span>`;
+        }).join('')}
+      </div>
+      ${isComplete
+        ?`<div style="padding:.4rem .7rem;background:var(--gp);border-radius:8px;font-size:.82rem;color:var(--g);font-weight:700;text-align:center">
+            🏆 ${t('score_total')}: <strong>${totalCorrect} / ${TOTAL}</strong> (${Math.round(totalCorrect/TOTAL*100)}%)
+          </div>`
+        :`<div style="font-size:.75rem;color:#a05000;padding:.3rem .4rem">
+            ⏳ ${t('waiting_for',{names:grp.allMembers.filter((_,i)=>memberScores[i].answered<memberQCount[i]).join(', ')})}
+            (${totalAnswered}/${TOTAL} · ${totalCorrect} pts)
+          </div>`
+      }
+    </div>`;
+  }
+  el.innerHTML=html||`<div class="empty-state">${t('empty_summary',{cls})}</div>`;
+}
+
+// ════════════════════════════
+// NAV
+// ════════════════════════════
+function goTab(tab){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(tab).classList.add('active');
+  document.getElementById('nav-'+tab).classList.add('active');
+  if(tab==='summary') renderSummary(currentSummaryClass);
+}
+function clearAll(){
+  if(confirm(t('confirm_clear'))){ localStorage.removeItem('bio_scores2'); renderSummary(currentSummaryClass); }
+}
+function shuffle(a){ return a.sort(()=>Math.random()-.5); }
+
+// init
+applyI18N();
+</script>
+</body>
+</html>
